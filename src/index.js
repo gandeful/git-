@@ -10,9 +10,10 @@ function ajax(url, callback) {
 
 function map(startTag) {
     // <ul> => </u l > 
+    var startTag = '<' + startTag + '>'
     var arr = startTag.split('');//切割为数组
     arr[0] += '/';//添加/
-    return arr.join('');//转换为字符串
+    return [startTag, arr.join('')];//转换为字符串
 }
 
 
@@ -30,17 +31,32 @@ function map(startTag) {
  *   
  */
 function fillOperate(id, data, obj) {
-    startTag = obj.rootTag;
-    itemTag = obj.itemTag;
 
-    var html = startTag;
+    if (!obj) {
+        obj = {
+            rootTag: 'ul',
+            itemTag: 'li'
+        }
+    }
+
+    var startTag = map(obj.rootTag);
+    var itemTag = map(obj.itemTag);
+
+    var html = startTag[0];
     for (var i = 0; i < data.length; i++) {
-        var li = [itemTag, data[i], map(itemTag)];
+        
+        var li;
+        if(obj.itemTag == 'img'){
+            li = ['<img src="',data[i],'"/>'];
+        }else{
+            li = [itemTag[0], data[i], itemTag[1]];
+        }
         html += li.join('');//分隔符为空字符串,将数组转化为字符串
     }
-    html += map(startTag);
+    html += startTag[1];
 
-    var rootStyle = obj.rootStyle;
+
+    var rootStyle = obj.rootStyle || {};
     var itemStyle = obj.itemStyle;
     //如果itemStyle没有设置,默认为横着的样式
     if (!itemStyle) {
@@ -54,9 +70,9 @@ function fillOperate(id, data, obj) {
     //链式编程
     $(id)
         .html(html)//渲染标签
-        .find('ul')//找到ul清除浮动
         .css(rootStyle)
-        .find('li')//设置li浮动
+        .find(obj.rootTag)//找到ul清除浮动
+        .find(obj.itemTag)//设置li浮动
         .css(itemStyle);//列表的样式写死了,只能是横着的,不太好
 }
 
@@ -64,7 +80,7 @@ function fillOperate(id, data, obj) {
 //请求header的数据
 ajax('/header', function (data) {
 
-    fillOperate('#header', data, '<ul>', '<li>');
+    fillOperate('#header', data);
     /*
     var html = "<ul>";
     for (var i = 0; i < data.length; i++) {
@@ -103,18 +119,41 @@ ajax('/header', function (data) {
 })
 
 ajax('/nav', function (data) {
-    fillOperate('#nav', data, '<ul>', '<li>');
+    fillOperate('#nav', data);
 })
 
 ajax('/aside', function (data) {
-    
-    fillOperate('#aside', data, '<ul>', '<li>',{
-        'color':'red',
-        'fontSize':'18px',
-        "listStyle": "none",
+
+    fillOperate('#aside', data, {
+        rootTag: 'ul',
+        rootStyle:{
+            float:'left'
+        },
+        itemTag: 'li',
+        itemStyle: {
+            'color': 'red',
+            'fontSize': '18px',
+            "listStyle": "none",
+        }
     });
 })
 
-ajax('/slide',function(data){
+ajax('/slide', function (data) {
+    fillOperate('#slide', data, {
+        rootTag: 'div',
+        rootStyle:{
+            float:'left',
+            width:'1200px',
+            height:'460px',
+            overflow: 'hidden'
+        },
+        itemTag: 'img',
+        itemStyle: {
+            'color': 'red',
+            'fontSize': '18px',
+            "listStyle": "none",
+        }
+    });
 
+    
 })
