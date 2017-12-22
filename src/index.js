@@ -44,11 +44,11 @@ function fillOperate(id, data, obj) {
 
     var html = startTag[0];
     for (var i = 0; i < data.length; i++) {
-        
+
         var li;
-        if(obj.itemTag == 'img'){
-            li = ['<img src="',data[i],'"/>'];
-        }else{
+        if (obj.itemTag == 'img') {
+            li = ['<img src="', data[i], '"/>'];
+        } else {
             li = [itemTag[0], data[i], itemTag[1]];
         }
         html += li.join('');//分隔符为空字符串,将数组转化为字符串
@@ -126,8 +126,8 @@ ajax('/aside', function (data) {
 
     fillOperate('#aside', data, {
         rootTag: 'ul',
-        rootStyle:{
-            float:'left'
+        rootStyle: {
+            float: 'left'
         },
         itemTag: 'li',
         itemStyle: {
@@ -141,10 +141,10 @@ ajax('/aside', function (data) {
 ajax('/slide', function (data) {
     fillOperate('#slide', data, {
         rootTag: 'div',
-        rootStyle:{
-            float:'left',
-            width:'1200px',
-            height:'460px',
+        rootStyle: {
+            float: 'left',
+            width: '1200px',
+            height: '460px',
             overflow: 'hidden'
         },
         itemTag: 'img',
@@ -155,5 +155,17 @@ ajax('/slide', function (data) {
         }
     });
 
-    
+
+    //图片轮播
+    $('img').click(function () {
+
+        var index = $(this).index();//找到自己的位置
+        $(this).fadeOut();//自己消失
+
+        if (index == data.length - 1) {//找到后面一个没找到
+            $('img').eq(0).fadeIn();
+        } else {
+            $('img').eq(index + 1).fadeIn();
+        }
+    })
 })
