@@ -15,7 +15,24 @@ function map(startTag) {
     return arr.join('');//转换为字符串
 }
 
-function fillOperate(id, data, startTag, itemTag, itemStyle) {
+
+
+/**
+ * 
+ * @param {*} id div根元素
+ * @param {*} data 数据源
+ * @param obj
+ *      
+ *      @param rootTag
+ *      @param rootStyle
+ *      @param itemTag
+ *      @param itemStyle
+ *   
+ */
+function fillOperate(id, data, obj) {
+    startTag = obj.rootTag;
+    itemTag = obj.itemTag;
+
     var html = startTag;
     for (var i = 0; i < data.length; i++) {
         var li = [itemTag, data[i], map(itemTag)];
@@ -23,7 +40,8 @@ function fillOperate(id, data, startTag, itemTag, itemStyle) {
     }
     html += map(startTag);
 
-
+    var rootStyle = obj.rootStyle;
+    var itemStyle = obj.itemStyle;
     //如果itemStyle没有设置,默认为横着的样式
     if (!itemStyle) {
         itemStyle = {
@@ -31,12 +49,13 @@ function fillOperate(id, data, startTag, itemTag, itemStyle) {
             "listStyle": "none",
             "marginLeft": "5px"
         }
+        rootStyle.overflow = 'hidden';
     }
     //链式编程
     $(id)
         .html(html)//渲染标签
         .find('ul')//找到ul清除浮动
-        .css('overflow', 'hidden')
+        .css(rootStyle)
         .find('li')//设置li浮动
         .css(itemStyle);//列表的样式写死了,只能是横着的,不太好
 }
@@ -87,4 +106,15 @@ ajax('/nav', function (data) {
     fillOperate('#nav', data, '<ul>', '<li>');
 })
 
+ajax('/aside', function (data) {
+    
+    fillOperate('#aside', data, '<ul>', '<li>',{
+        'color':'red',
+        'fontSize':'18px',
+        "listStyle": "none",
+    });
+})
 
+ajax('/slide',function(data){
+
+})
