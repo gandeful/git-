@@ -11,11 +11,11 @@ function ajax(url, callback) {
 function map(startTag) {
     // <ul> => </u l > 
     var arr = startTag.split('');//切割为数组
-    arr[0]+= '/';//添加/
+    arr[0] += '/';//添加/
     return arr.join('');//转换为字符串
 }
 
-function fillOperate(id, data, startTag,itemTag) {
+function fillOperate(id, data, startTag, itemTag, itemStyle) {
     var html = startTag;
     for (var i = 0; i < data.length; i++) {
         var li = [itemTag, data[i], map(itemTag)];
@@ -23,23 +23,29 @@ function fillOperate(id, data, startTag,itemTag) {
     }
     html += map(startTag);
 
+
+    //如果itemStyle没有设置,默认为横着的样式
+    if (!itemStyle) {
+        itemStyle = {
+            "float": "left",
+            "listStyle": "none",
+            "marginLeft": "5px"
+        }
+    }
+    //链式编程
     $(id)
         .html(html)//渲染标签
         .find('ul')//找到ul清除浮动
         .css('overflow', 'hidden')
         .find('li')//设置li浮动
-        .css({
-            "float": "left",
-            "listStyle": "none",
-            "marginLeft": "5px"
-        })
+        .css(itemStyle);//列表的样式写死了,只能是横着的,不太好
 }
 
 
 //请求header的数据
 ajax('/header', function (data) {
 
-    fillOperate('#header', data,'<ul>','<li>');
+    fillOperate('#header', data, '<ul>', '<li>');
     /*
     var html = "<ul>";
     for (var i = 0; i < data.length; i++) {
@@ -77,5 +83,8 @@ ajax('/header', function (data) {
 
 })
 
+ajax('/nav', function (data) {
+    fillOperate('#nav', data, '<ul>', '<li>');
+})
 
 
