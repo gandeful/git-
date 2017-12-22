@@ -23,7 +23,7 @@ function fillOperate(id, data, startTag,itemTag) {
     }
     html += map(startTag);
 
-    $('#header')
+    $(id)
         .html(html)//渲染标签
         .find('ul')//找到ul清除浮动
         .css('overflow', 'hidden')
@@ -76,5 +76,6 @@ ajax('/header', function (data) {
         })*/
 
 })
+
 
 
